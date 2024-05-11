@@ -1,29 +1,38 @@
 <script setup>
-import { ref } from 'vue'
-import BaseButton from '@/components/base/BaseButton.vue'
-import BaseCheckbox from '@/components/base/BaseCheckbox.vue'
-import BaseContainer from '@/components/base/BaseContainer.vue'
-import BaseCard from '@/components/base/BaseCard.vue'
-import BaseForm from '@/components/base/BaseForm.vue'
-import BaseInput from '@/components/base/BaseInput.vue'
+import { ref } from "vue";
+import { collection, addDoc } from "firebase/firestore";
+import { useFirestore } from "vuefire";
+import { useRouter} from 'vue-router'
+import BaseButton from "@/components/base/BaseButton.vue";
+import BaseCheckbox from "@/components/base/BaseCheckbox.vue";
+import BaseContainer from "@/components/base/BaseContainer.vue";
+import BaseCard from "@/components/base/BaseCard.vue";
+import BaseForm from "@/components/base/BaseForm.vue";
+import BaseInput from "@/components/base/BaseInput.vue";
 
-import { collection, addDoc } from "firebase/firestore"; 
-
-// Add a new document with a generated id.
-const docRef = await addDoc(collection(db, "cities"), {
-  name: "Tokyo",
-  country: "Japan"
-});
-console.log("Document written with ID: ", docRef.id);
-
+const db = useFirestore();
+const router = useRouter()
 
 const newCafe = ref({
-  name: '',
+  name: "",
   rating: 0,
-  location: 'United States',
+  location: "United States",
   price: 1,
   favorite: false,
-})
+});
+
+// Add a new document with a generated id.
+async function addCafe() {
+  const newDoc = await addDoc(collection(db, "cafes"), {
+    ...newCafe.value,
+  });
+  // console.log(newDoc)
+  // redirect the user to the homepage once they POST a new cafe
+  if(newDoc.id){
+    router.push('/')
+  }
+}
+// console.log("Document written with ID: ", docRef.id);
 </script>
 
 <template>
