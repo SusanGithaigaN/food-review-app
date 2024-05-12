@@ -1,33 +1,32 @@
 <script setup>
-import { ref } from 'vue'
-import { useFirebaseAuth } from 'vuefire'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "@firebase/auth"
+import { ref } from "vue";
+import { useFirebaseAuth } from "vuefire";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "@firebase/auth";
 
-import BaseButton from "@/components/base/BaseButton.vue"
-import BaseContainer from "@/components/base/BaseContainer.vue"
-import BaseCard from "@/components/base/BaseCard.vue"
-import BaseForm from "@/components/base/BaseForm.vue"
-import BaseInput from "@/components/base/BaseInput.vue"
+import BaseButton from "@/components/base/BaseButton.vue";
+import BaseContainer from "@/components/base/BaseContainer.vue";
+import BaseCard from "@/components/base/BaseCard.vue";
+import BaseForm from "@/components/base/BaseForm.vue";
+import BaseInput from "@/components/base/BaseInput.vue";
 
 const userInput = ref({
   email: "",
   password: "",
 });
 
-const auth = useFirebaseAuth()
+const auth = useFirebaseAuth();
 
 // POST user
 async function createUser() {
   // firebase helper method
-  createUserWithEmailAndPassword(
-    auth,
-    userInput.value.email,
-    userInput.value.password
-  )
+  createUserWithEmailAndPassword(auth, userInput.value.email, userInput.value.password)
     .then((userCredential) => {
       // Signed up
-      const user = userCredential.user
-      console.log(user)
+      const user = userCredential.user;
+      console.log(user);
       // ...
     })
     .catch((error) => {
@@ -38,17 +37,17 @@ async function createUser() {
 }
 
 // user sign in
-async function signInToFirebase(){
-    signInWithEmailAndPassword(auth, userInput.value.email, userInput.value.password)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
+async function signInToFirebase() {
+  signInWithEmailAndPassword(auth, userInput.value.email, userInput.value.password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
 }
 </script>
 
@@ -74,13 +73,10 @@ async function signInToFirebase(){
         </BaseForm>
       </template>
       <template v-slot:actions>
-        <BaseButton @click="signInToFirebase" variant="tonal" color="success"> Sign In </BaseButton>
-        <BaseButton
-          @click="createUser"
-          variant="tonal"
-          color="secondary"
-          outline
-        >
+        <BaseButton @click="signInToFirebase" variant="tonal" color="success">
+          Sign In
+        </BaseButton>
+        <BaseButton @click="createUser" variant="tonal" color="secondary" outline>
           Create New User
         </BaseButton>
       </template>
