@@ -1,15 +1,17 @@
 <script setup>
-import { computed } from 'vue'
-import BaseButton from '@/components/base/BaseButton.vue'
-import BaseIcon from '@/components/base/BaseIcon.vue'
-import BaseImageCard from '@/components/base/BaseImageCard.vue'
-import BaseRating from '@/components/base/BaseRating.vue'
-import CafeImage from '@/components/CafeImage.vue'
+import { computed } from "vue";
+import { deleteDoc, doc } from "@firebase/firestore";
+import { useFirestore } from "vuefire";
+import BaseButton from "@/components/base/BaseButton.vue";
+import BaseIcon from "@/components/base/BaseIcon.vue";
+import BaseImageCard from "@/components/base/BaseImageCard.vue";
+import BaseRating from "@/components/base/BaseRating.vue";
+import CafeImage from "@/components/CafeImage.vue";
 
 const props = defineProps({
   description: {
     type: String,
-    default: 'No review yet',
+    default: "No review yet",
   },
   docId: {
     type: String,
@@ -21,7 +23,7 @@ const props = defineProps({
   },
   location: {
     type: String,
-    default: 'United States',
+    default: "United States",
   },
   name: {
     type: String,
@@ -35,22 +37,29 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-})
+});
 
 const priceSymbol = computed(() => {
   switch (props.price) {
     case 1:
-      return '$ - Less than $10'
+      return "$ - Less than $10";
     case 2:
-      return '$$ - Between $10 to $30'
+      return "$$ - Between $10 to $30";
     case 3:
-      return '$$$ - Between $30 to $60'
+      return "$$$ - Between $30 to $60";
     case 4:
-      return '$$$$ - More than $60'
+      return "$$$$ - More than $60";
     default:
-      return 'No price defined'
+      return "No price defined";
   }
-})
+});
+
+const db = useFirestore();
+
+// DELETE
+async function deleteCafe() {
+  await deleteDoc(doc(db, "cafes", props.docId));
+}
 </script>
 
 <template>
@@ -62,12 +71,7 @@ const priceSymbol = computed(() => {
       {{ name }}
     </template>
     <template v-slot:subtitle v-if="favorite">
-      <BaseIcon
-        color="error"
-        icon="mdi-fire-circle"
-        size="small"
-        class="mr-1"
-      />
+      <BaseIcon color="error" icon="mdi-fire-circle" size="small" class="mr-1" />
       <span class="mr-1">Favorite</span>
     </template>
     <template v-slot:rating>
@@ -88,10 +92,11 @@ const priceSymbol = computed(() => {
       {{ priceSymbol }}
     </template>
     <template v-slot:actions>
-      <BaseButton color="primary" disabled>
+      // dynamically bind the path to the URL schema defined in router>index.js
+      <BaseButton color="primary" :to="`/cafe/${docId}`">
         <BaseIcon icon="mdi-pencil" class="mr-1" /> Edit
       </BaseButton>
-      <BaseButton color="error" text disabled>
+      <BaseButton @click="deleteCafe" color="error" text>
         <BaseIcon icon="mdi-trash-can-outline" class="mr-1" />
         Delete
       </BaseButton>
